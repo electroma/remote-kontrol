@@ -43,19 +43,19 @@ class RemoteControl constructor(transport: Transport, unserializableResultStrate
     }
 
     @Throws(IOException::class)
-    fun exec(commands: Array<out () -> Any>): Any? {
+    fun exec(commands: Array<out () -> Any?>): Any? {
         return exec(LinkedHashMap<String, Any>(), commands)
     }
 
     @Throws(IOException::class)
-    fun exec(params: Map<String, *>, commands: Array<out () -> Any>): Any? {
+    fun exec(params: Map<String, *>, commands: Array<out () -> Any?>): Any? {
         val copy = LinkedHashMap<String, Any>(params)
         val commandChain = generateCommandChain(copy, commands)
         return support.send(commandChain)
     }
 
     @Throws(IOException::class)
-    operator fun invoke(vararg commands: Function0<Any>): Any? {
+    operator fun invoke(vararg commands: Function0<Any?>): Any? {
         return exec(commands)
     }
 
@@ -65,7 +65,7 @@ class RemoteControl constructor(transport: Transport, unserializableResultStrate
     }
 
     @Throws(IOException::class)
-    protected fun generateCommandChain(params: Map<String, Any>, closures: Array<out () -> Any>): CommandChain<ClosureCommand> {
+    protected fun generateCommandChain(params: Map<String, Any>, closures: Array<out () -> Any?>): CommandChain<ClosureCommand> {
         val commands = ArrayList<ClosureCommand>(closures.size)
         for (closure in closures) {
             var uses = emptyList<Function0<Any>>()
