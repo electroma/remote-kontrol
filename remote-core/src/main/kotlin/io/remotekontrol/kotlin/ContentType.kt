@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.kotlin
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+enum class ContentType private constructor(val value: String) {
 
-class SampleTest {
+    COMMAND("application/remote-control-command"),
+    RESULT("application/remote-control-result")
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
-    }
 }

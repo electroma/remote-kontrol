@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.server
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
-class SampleTest {
+interface Receiver {
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
-    }
+    /**
+     * Executes a serialised command chain.
+
+     * @param commandStream A stream containing a serialised [io.remotecontrol.CommandChain] object.
+     * *
+     * @param resultStream The stream that the [io.remotecontrol.result.Result] object shall be written to.
+     */
+    @Throws(IOException::class)
+    fun execute(commandStream: InputStream, resultStream: OutputStream)
+
 }

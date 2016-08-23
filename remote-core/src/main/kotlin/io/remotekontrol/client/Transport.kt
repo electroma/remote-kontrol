@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.client
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+import io.remotekontrol.CommandChain
+import io.remotekontrol.result.Result
 
-class SampleTest {
+import java.io.IOException
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
-    }
+/**
+ * A transport is used by a remotecontrol control for sending a command and receiving the result.
+ */
+interface Transport {
+
+    @Throws(IOException::class)
+    fun send(commandChain: CommandChain<*>): Result
+
 }

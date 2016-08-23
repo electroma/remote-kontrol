@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.kotlin
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+import io.remotekontrol.Command
 
-class SampleTest {
+class ClosureCommand(val instance: ByteArray, val root: ByteArray, val supports: Collection<ByteArray>) : Command {
+    companion object {
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
+        private val serialVersionUID = 1L
     }
 }

@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.result
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+interface ThrownResult : SerializedResult {
 
-class SampleTest {
+    override fun deserialize(classLoader: ClassLoader): Throwable
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
-    }
 }

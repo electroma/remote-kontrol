@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.kotlin.server
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+import io.remotekontrol.CommandChain
+import io.remotekontrol.kotlin.ClosureCommand
 
-class SampleTest {
+/**
+ * A context factory produces what will be used as the delegate for all commands in a command chain.
+ */
+interface ContextFactory {
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
-    }
+    /**
+     * Produces a context to be used for the entire given chain.
+     */
+    fun getContext(chain: CommandChain<ClosureCommand>): Any
+
 }

@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.client
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
 
-class SampleTest {
+import io.remotekontrol.RemoteKontrolException
+import io.remotekontrol.result.UnserializableResult
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
+import java.lang.String.format
+
+class UnserializableReturnException(result: UnserializableResult) : RemoteKontrolException(format("The return value of the command was not serializable, its string representation was '%s'", result.stringRepresentation)) {
+
+    val stringRepresentation: String
+
+    init {
+        this.stringRepresentation = result.stringRepresentation
     }
+
 }

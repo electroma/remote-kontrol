@@ -1,8 +1,8 @@
-import io.remotecontrol.CommandChain
-import io.remotecontrol.groovy.ClosureCommand
-import io.remotecontrol.groovy.server.ClosureCommandRunner
-import io.remotecontrol.result.impl.DefaultResultFactory
-import io.remotecontrol.server.StorageContextFactory
+import io.remotekontrol.CommandChain
+import io.remotekontrol.kotlin.ClosureCommand
+import io.remotekontrol.kotlin.server.ClosureCommandRunner
+import io.remotekontrol.result.impl.DefaultResultFactory
+import io.remotekontrol.server.StorageContextFactory
 import org.junit.Test
 import java.nio.file.Files.readAllBytes
 import java.nio.file.Paths

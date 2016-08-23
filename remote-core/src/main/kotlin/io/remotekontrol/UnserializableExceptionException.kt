@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
+package io.remotekontrol
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+import java.lang.String.format
 
-class SampleTest {
+class UnserializableExceptionException(unserializable: Throwable) :
+        RemoteKontrolException(format("wrapped unserializable exception: class = %s, message = \"%s\"",
+                unserializable.javaClass.name, unserializable.message)) {
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
+    init {
+        (this as java.lang.Throwable).stackTrace = unserializable.stackTrace
+        unserializable.cause?.let {
+            initCause(UnserializableExceptionException(it))
+        }
     }
+
+    companion object {
+        val serialVersionUID = 1L
+    }
+
 }

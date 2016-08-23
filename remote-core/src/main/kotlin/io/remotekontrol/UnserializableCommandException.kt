@@ -14,20 +14,9 @@
  * limitations under the License.
  */
 
+package io.remotekontrol
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+import java.io.NotSerializableException
 
-class SampleTest {
-
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
-    }
-}
+class UnserializableCommandException(`object`: Any, e: NotSerializableException) :
+        RemoteKontrolException("Unable to serialize raw command: " + `object`, e)

@@ -1,6 +1,6 @@
 package io.remorekontrol
 
-import cop.runtime.remote.RemotingServletInitializer
+import helper.RemotingServletInitializer
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.web.servlet.ServletContextInitializer

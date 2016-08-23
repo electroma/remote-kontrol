@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
+package io.remotekontrol.kotlin.client
 
-import io.remorekontrol.SampleHeadlessHelper.Companion.login
-import io.remotekontrol.kotlin.client.RemoteKontrol
-import io.remotekontrol.transport.http.HttpTransport
-import org.junit.Test
-import java.awt.Label
+import kotlin.jvm.internal.FunctionImpl
 
-class SampleTest {
+class RawClosureCommand(val root: FunctionImpl, val used: List<Class<*>>) {
 
-    @Test
-    fun testConnect() {
-        val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
-            login { assert(it.sampleUI.content is Label) }
-        })
+    override fun toString(): String {
+        return "RawClosureCommand{" +
+                "master=" + root +
+                ", used=" + used +
+                '}'
     }
 }
