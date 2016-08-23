@@ -41,11 +41,11 @@ class FilteringClassLoader(parent: ClassLoader, vararg blockedPackages: String) 
                 throw e
             }
             // The class isn't visible
-            throw ClassNotFoundException(String.format("%s not found.", name))
+            throw ClassNotFoundException("$name not found.")
         }
 
         if (!allowed(cl)) {
-            throw ClassNotFoundException(String.format("%s not found.", cl.name))
+            throw ClassNotFoundException("${cl.name} not found.")
         }
         if (resolve) {
             resolveClass(cl)
@@ -94,15 +94,4 @@ class FilteringClassLoader(parent: ClassLoader, vararg blockedPackages: String) 
         }
         return true
     }
-
-    private class EmptyEnumeration<T> : Enumeration<T> {
-        override fun hasMoreElements(): Boolean {
-            return false
-        }
-
-        override fun nextElement(): T {
-            throw NoSuchElementException()
-        }
-    }
-
 }

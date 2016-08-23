@@ -16,7 +16,6 @@
 
 package io.remotekontrol.result
 
-import java.io.IOException
 import java.io.InputStream
 
 interface ResultFactory {
@@ -25,7 +24,6 @@ interface ResultFactory {
 
     fun forThrown(throwable: Throwable): Result
 
-    @Throws(IOException::class)
     fun deserialize(inputStream: InputStream, classLoader: ClassLoader): Result
 
 }

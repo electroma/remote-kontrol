@@ -22,9 +22,7 @@ import io.remotekontrol.client.RemoteKontrolSupport
 import io.remotekontrol.client.Transport
 import io.remotekontrol.client.UnserializableResultStrategy
 import io.remotekontrol.kotlin.ClosureCommand
-import java.io.IOException
-import java.util.*
-import kotlin.jvm.internal.Lambda
+import kotlin.reflect.KClass
 
 class RemoteKontrol constructor(transport: Transport, unserializableResultStrategy: UnserializableResultStrategy, classLoader: ClassLoader) {
 
@@ -42,42 +40,19 @@ class RemoteKontrol constructor(transport: Transport, unserializableResultStrate
         this.commandGenerator = ClosureCommandGenerator(classLoader)
     }
 
-    @Throws(IOException::class)
-    fun exec(commands: Array<out () -> Any?>): Any? {
-        return exec(LinkedHashMap<String, Any>(), commands)
-    }
-
-    @Throws(IOException::class)
-    fun exec(params: Map<String, *>, commands: Array<out () -> Any?>): Any? {
-        val copy = LinkedHashMap<String, Any>(params)
-        val commandChain = generateCommandChain(copy, commands)
+    operator fun invoke(vararg commands: Function0<Any?>, libClasses: List<Class<*>> = emptyList()): Any? {
+        val commandChain = generateCommandChain(libClasses, commands)
         return support.send(commandChain)
     }
 
-    @Throws(IOException::class)
-    operator fun invoke(vararg commands: Function0<Any?>): Any? {
-        return exec(commands)
+    @Suppress("UNCHECKED_CAST")
+    operator fun <T> invoke(vararg libClasses: KClass<*>, command: () -> T): T? {
+        val commandChain = generateCommandChain(libClasses.map { it.java }, arrayOf(command))
+        return support.send(commandChain) as T
     }
 
-    @Throws(IOException::class)
-    operator fun invoke(params: Map<String, *>, commands: Array<Function0<Any>>): Any? {
-        return exec(params, commands)
-    }
-
-    @Throws(IOException::class)
-    protected fun generateCommandChain(params: Map<String, Any>, closures: Array<out () -> Any?>): CommandChain<ClosureCommand> {
-        val commands = ArrayList<ClosureCommand>(closures.size)
-        for (closure in closures) {
-            var uses = emptyList<Class<*>>()
-            if (params.containsKey("usedClosures")) {
-                @SuppressWarnings("unchecked")
-                val usedClosures = params["usedClosures"] as List<Class<*>>
-                uses = usedClosures
-            }
-            val command = commandGenerator.generate(RawClosureCommand(closure as Lambda, uses))
-            commands.add(command)
-        }
+    private fun <T> generateCommandChain(libClasses: List<Class<*>>, closures: Array<out Function0<T>>): CommandChain<ClosureCommand> {
+        val commands = closures.map { commandGenerator.generate(RawClosureCommand(it, libClasses)) }
         return CommandChain.of(ClosureCommand::class.java, commands)
     }
-
 }

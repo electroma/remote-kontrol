@@ -19,18 +19,16 @@ package io.remotekontrol.server
 import io.remotekontrol.RemoteKontrolException
 import io.remotekontrol.SerializationUtil
 import io.remotekontrol.kotlin.ClosureCommand
-import java.io.IOException
 import kotlin.jvm.internal.FunctionImpl
 
 class CommandInvoker(private val parentLoader: ClassLoader, private val command: ClosureCommand) {
 
-    @Throws(Throwable::class)
     fun invokeAgainst(delegate: Any, argument: Any?): Any? {
         try {
             val instance = instantiate()
 
             return instance()
-            //FIXME: shouldd add support for Function1,2,3
+            //FIXME: should add support for Function1 to accept support chaining
             /*else {
                 return instance(argument)
             }*/
@@ -48,8 +46,7 @@ class CommandInvoker(private val parentLoader: ClassLoader, private val command:
 
     }
 
-    @Throws(IOException::class)
-    protected fun instantiate(): FunctionImpl {
+    private fun instantiate(): FunctionImpl {
         SerializationUtil.defineClass(parentLoader, command.root)
 
         for (bytes in command.supports) {

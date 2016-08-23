@@ -22,7 +22,7 @@ import io.remotekontrol.result.Result
 
 interface CommandRunner<T : Command> {
 
-    val type: Class<T>
+    val type: Class<out Command>
 
     fun run(commandChain: CommandChain<T>): Result
 

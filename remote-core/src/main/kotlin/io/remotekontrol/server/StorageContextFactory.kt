@@ -16,8 +16,8 @@
 
 package io.remotekontrol.server
 
+import io.remotekontrol.Command
 import io.remotekontrol.CommandChain
-import io.remotekontrol.kotlin.ClosureCommand
 import io.remotekontrol.kotlin.server.ContextFactory
 import java.util.*
 
@@ -35,7 +35,7 @@ import java.util.*
 abstract class StorageContextFactory : ContextFactory {
 
     private class WithEmptyStorage : StorageContextFactory() {
-        override fun getContext(chain: CommandChain<ClosureCommand>): Storage {
+        override fun getContext(chain: CommandChain<out Command>): Storage {
             return Storage(LinkedHashMap<String, Any>())
         }
 
@@ -48,25 +48,16 @@ abstract class StorageContextFactory : ContextFactory {
             this.seed = LinkedHashMap(seed)
         }
 
-        override fun getContext(chain: CommandChain<ClosureCommand>): Storage {
+        override fun getContext(chain: CommandChain<out Command>): Storage {
             return Storage(LinkedHashMap(seed))
         }
     }
 
     private class WithGenerator(val generator: Function1<CommandChain<*>, MutableMap<String, Any>>) : StorageContextFactory() {
 
-        override fun getContext(chain: CommandChain<ClosureCommand>): Storage {
-            var storage = generator(chain)
-            if (storage == null) {
-                storage = LinkedHashMap()
-            }
-
-            if (storage is Map<*, *>) {
-                return Storage(storage)
-            } else {
-                throw IllegalArgumentException("The generator did not return a map")
-            }
-
+        override fun getContext(chain: CommandChain<out Command>): Storage {
+            val storage = generator(chain)
+            return Storage(storage)
         }
     }
 

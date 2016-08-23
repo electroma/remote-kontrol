@@ -16,14 +16,7 @@
 
 package io.remotekontrol.kotlin.client
 
-import kotlin.jvm.internal.FunctionImpl
+class RawClosureCommand(val root: Function0<*>, val used: List<Class<*>>) {
 
-class RawClosureCommand(val root: FunctionImpl, val used: List<Class<*>>) {
-
-    override fun toString(): String {
-        return "RawClosureCommand{" +
-                "master=" + root +
-                ", used=" + used +
-                '}'
-    }
+    override fun toString(): String = "RawClosureCommand{master=$root, used=$used}"
 }

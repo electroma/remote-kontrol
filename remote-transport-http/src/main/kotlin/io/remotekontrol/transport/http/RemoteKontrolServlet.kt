@@ -54,11 +54,10 @@ abstract class RemoteKontrolServlet : HttpServlet() {
 
      * @return true if the request is valid and should proceed, false if otherwise.
      */
-    @Throws(IOException::class)
     protected fun validateRequest(request: HttpServletRequest, response: HttpServletResponse): Boolean {
         val contentType = request.getContentType()
         if (contentType == null || contentType != ContentType.COMMAND.value) {
-            response.sendError(415, "Only remotecontrol control commands can be sent")
+            response.sendError(415, "Only remotekontrol control commands can be sent")
             return false
         }
 
@@ -77,7 +76,6 @@ abstract class RemoteKontrolServlet : HttpServlet() {
     /**
      * Hook for subclasses to wrap the actual execution.
      */
-    @Throws(IOException::class)
     protected fun doExecute(input: InputStream, output: OutputStream) {
         val receiver = createReceiver()
         receiver.execute(input, output)

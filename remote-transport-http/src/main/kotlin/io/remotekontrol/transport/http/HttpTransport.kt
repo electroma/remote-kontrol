@@ -23,31 +23,25 @@ import io.remotekontrol.kotlin.ContentType
 import io.remotekontrol.result.Result
 import io.remotekontrol.result.ResultFactory
 import io.remotekontrol.result.impl.DefaultResultFactory
-
-import java.io.Closeable
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.URL
 
 /**
  * Transports commands over http to the given receiver address.
- */
-class HttpTransport
-/**
- * @param receiverAddress the full address to the remotecontrol receiver
+ *
+ * @param receiverAddress the full address to the remotekontrol receiver
  * *
  * @param classLoader the class loader to use when unserialising the result
  */
-@JvmOverloads constructor(private val receiverAddress: String, private val classLoader: ClassLoader = Thread.currentThread().contextClassLoader, private val resultFactory: ResultFactory = DefaultResultFactory()) : Transport {
+open class HttpTransport(private val receiverAddress: String,
+                         private val classLoader: ClassLoader = Thread.currentThread().contextClassLoader,
+                         private val resultFactory: ResultFactory = DefaultResultFactory()) : Transport {
 
     /**
      * Serialises the Command and sends it over HTTP, returning the Result.
 
      * @throws RemoteKontrolException if there is any issue with the receiver.
      */
-    @Throws(RemoteKontrolException::class)
     override fun send(commandChain: CommandChain<*>): Result {
 
         val urlConnection = openConnection()
@@ -77,19 +71,18 @@ class HttpTransport
     }
 
     /**
-     * Creates a HttpURLConnection to the remotecontrol receiver at the given receiverAddress.
+     * Creates a HttpURLConnection to the remotekontrol receiver at the given receiverAddress.
      */
-    @Throws(IOException::class)
     protected fun openConnection(): HttpURLConnection {
         return URL(receiverAddress).openConnection() as HttpURLConnection
     }
 
 }
 /**
- * @param receiverAddress the full address to the remotecontrol receiver
+ * @param receiverAddress the full address to the remotekontrol receiver
  * *
- * @param classLoader the class loader to use when unserialising the result
+ * @param classLoader the class loader to use when unserializing the result
  */
 /**
- * @param receiverAddress the full address to the remotecontrol receiver
+ * @param receiverAddress the full address to the remotekontrol receiver
  */

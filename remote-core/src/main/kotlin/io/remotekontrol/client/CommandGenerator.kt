@@ -17,13 +17,11 @@
 package io.remotekontrol.client
 
 import io.remotekontrol.Command
-import io.remotekontrol.RemoteKontrolException
 
 interface CommandGenerator<I, O : Command> {
 
     val commandType: Class<O>
 
-    @Throws(RemoteKontrolException::class)
-    fun generate(`object`: I): O
+    fun generate(command: I): O
 
 }

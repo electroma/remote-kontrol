@@ -22,11 +22,10 @@ import io.remotekontrol.result.Result
 import java.io.IOException
 
 /**
- * A transport is used by a remotecontrol control for sending a command and receiving the result.
+ * A transport is used by a remotekontrol control for sending a command and receiving the result.
  */
 interface Transport {
 
-    @Throws(IOException::class)
     fun send(commandChain: CommandChain<*>): Result
 
 }

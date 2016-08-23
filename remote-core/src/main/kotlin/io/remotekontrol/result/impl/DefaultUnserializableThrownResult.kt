@@ -21,7 +21,9 @@ import io.remotekontrol.SerializationUtil
 import io.remotekontrol.UnserializableExceptionException
 import io.remotekontrol.result.UnserializableThrownResult
 
-class DefaultUnserializableThrownResult(stringRepresentation: String, private val notSerializableException: ByteArray) : DefaultUnserializableResult(stringRepresentation), UnserializableThrownResult {
+class DefaultUnserializableThrownResult(stringRepresentation: String,
+                                        private val notSerializableException: ByteArray) :
+        DefaultUnserializableResult(stringRepresentation), UnserializableThrownResult {
 
     override fun deserializeWrapper(classLoader: ClassLoader): UnserializableExceptionException {
         try {

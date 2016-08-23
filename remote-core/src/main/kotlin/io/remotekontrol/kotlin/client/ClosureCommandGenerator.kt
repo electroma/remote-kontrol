@@ -23,30 +23,29 @@ import io.remotekontrol.kotlin.ClosureCommand
 import io.remotekontrol.util.UnexpectedIOException
 import java.io.IOException
 import java.io.NotSerializableException
+import java.io.Serializable
 import java.util.*
-import kotlin.jvm.internal.FunctionImpl
 
 /**
  * Generates command objects from closures.
  */
 class ClosureCommandGenerator @JvmOverloads constructor(private val classLoader: ClassLoader = Thread.currentThread().contextClassLoader) : CommandGenerator<RawClosureCommand, ClosureCommand> {
 
-    override val commandType: Class<ClosureCommand>
-        get() = ClosureCommand::class.java
+    override val commandType: Class<ClosureCommand> = ClosureCommand::class.java
 
     /**
      * For the given closure, generate a command object.
      */
-    override fun generate(rawClosureCommand: RawClosureCommand): ClosureCommand {
+    override fun generate(command: RawClosureCommand): ClosureCommand {
         val bytes: ByteArray
         val classBytes: ByteArray
         val supports: MutableList<ByteArray>
-        bytes = serializeInstance(rawClosureCommand.root, rawClosureCommand.root)
-        classBytes = getClassBytes(rawClosureCommand.root.javaClass)
+        bytes = serializeInstance(command.root as Serializable)
+        classBytes = getClassBytes(command.root.javaClass)
 
-        supports = LinkedList(getSupportingClassesBytes(rawClosureCommand.root.javaClass))
+        supports = LinkedList(getSupportingClassesBytes(command.root.javaClass))
 
-        val used = rawClosureCommand.used
+        val used = command.used
         if (!used.isEmpty()) {
             for (usedClosure in used) {
                 supports.add(getClassBytes(usedClosure))
@@ -58,25 +57,15 @@ class ClosureCommandGenerator @JvmOverloads constructor(private val classLoader:
     }
 
     /**
-     * Gets the generated closure instance that is underneath the potential layers of currying.
-
-     * If the given closure is the root closure it is returned.
-     */
-    protected fun getRootClosure(closure: FunctionImpl): FunctionImpl {
-        var root = closure
-        return root
-    }
-
-    /**
      * Gets the class definition bytes of any closures classes that are used by the given closure class.
 
      * @see InnerClosureClassDefinitionsFinder
      */
-    protected fun getSupportingClassesBytes(closureClass: Class<*>): List<ByteArray> {
+    private fun getSupportingClassesBytes(closureClass: Class<*>): List<ByteArray> {
         try {
             return InnerClosureClassDefinitionsFinder(classLoader).find(closureClass)
         } catch (e: IOException) {
-            throw UnexpectedIOException("cannnot find inner closures of: " + closureClass.name, e)
+            throw UnexpectedIOException("can't find inner closures of: ${closureClass.name}", e)
         }
 
     }
@@ -84,9 +73,10 @@ class ClosureCommandGenerator @JvmOverloads constructor(private val classLoader:
     /**
      * Gets the class definition bytes for the given closure class.
      */
-    protected fun getClassBytes(closureClass: Class<*>): ByteArray {
+    private fun getClassBytes(closureClass: Class<*>): ByteArray {
         val classFileName = getClassFileName(closureClass)
-        val classFileResource = classLoader.getResource(classFileName) ?: throw IllegalStateException("Could not find class file for class " + closureClass.toString())
+        val classFileResource = classLoader.getResource(classFileName) ?:
+                throw IllegalStateException("Could not find class file for class $closureClass")
 
         try {
             return classFileResource.readBytes()
@@ -96,7 +86,7 @@ class ClosureCommandGenerator @JvmOverloads constructor(private val classLoader:
 
     }
 
-    protected fun getClassFileName(closureClass: Class<*>): String {
+    private fun getClassFileName(closureClass: Class<*>): String {
         return closureClass.name.replace(".", "/") + ".class"
     }
 
@@ -111,7 +101,7 @@ class ClosureCommandGenerator @JvmOverloads constructor(private val classLoader:
      * *
      * @param root the actual generated closure that contains the implementation.
      */
-    protected fun serializeInstance(closure: FunctionImpl, root: FunctionImpl): ByteArray {
+    private fun <T : Serializable> serializeInstance(closure: T): ByteArray {
         try {
             return SerializationUtil.serialize(closure)
         } catch (e: NotSerializableException) {

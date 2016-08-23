@@ -19,24 +19,22 @@ package io.remotekontrol.client
 import io.remotekontrol.Command
 import io.remotekontrol.CommandChain
 import io.remotekontrol.result.*
-import java.io.IOException
 
 class RemoteKontrolSupport<T : Command>(private val transport: Transport,
                                         private val unserializableResultStrategy: UnserializableResultStrategy,
                                         private val classLoader: ClassLoader) {
 
-    @Throws(IOException::class)
     fun send(commandChain: CommandChain<T>): Any? {
         val result = sendCommandChain(commandChain)
         return processResult(result)
     }
 
-    @Throws(IOException::class)
-    protected fun sendCommandChain(commandChain: CommandChain<*>): Result {
+    private fun sendCommandChain(commandChain: CommandChain<*>): Result {
         return transport.send(commandChain)
     }
 
-    protected fun processResult(result: Result): Any? {
+    private fun processResult(result: Result): Any? {
+
         if (result is NullResult) {
             return null
         } else if (result is ThrownResult) {
@@ -51,12 +49,12 @@ class RemoteKontrolSupport<T : Command>(private val transport: Transport,
             } else if (unserializableResultStrategy == UnserializableResultStrategy.THROW) {
                 throw UnserializableReturnException(result)
             } else {
-                throw IllegalStateException("Unhandled UnserializableResultStrategy: " + unserializableResultStrategy)
+                throw IllegalStateException("Unhandled UnserializableResultStrategy: $unserializableResultStrategy")
             }
         } else if (result is SerializedResult) {
             return result.deserialize(classLoader)
         } else {
-            throw IllegalArgumentException("Unknown result type: " + result)
+            throw IllegalArgumentException("Unknown result type: $result")
         }
     }
 

@@ -16,7 +16,7 @@
 
 package io.remotekontrol.kotlin
 
-enum class ContentType private constructor(val value: String) {
+enum class ContentType constructor(val value: String) {
 
     COMMAND("application/remote-control-command"),
     RESULT("application/remote-control-result")

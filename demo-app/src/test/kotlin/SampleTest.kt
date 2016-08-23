@@ -26,7 +26,7 @@ class SampleTest {
     @Test
     fun testConnect() {
         val remote = RemoteKontrol(HttpTransport("http://localhost:8080/remoting/"))
-        remote({
+        remote.invoke({
             login { assert(it.sampleUI.content is Label) }
         })
     }

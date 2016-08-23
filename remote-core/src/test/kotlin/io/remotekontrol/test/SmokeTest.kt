@@ -52,7 +52,7 @@ class SmokeTest {
                 clientClassLoader.parent)
 */
 
-        val serverClassLoader = FilteringClassLoader(clientClassLoader, "io.remotecontrol.test")
+        val serverClassLoader = FilteringClassLoader(clientClassLoader, "io.remotekontrol.test")
         val receiver = ClosureReceiver(serverClassLoader)
 
         transport = LocalTransport(receiver, clientClassLoader)
@@ -193,12 +193,12 @@ class SmokeTest {
     @Test
     fun testPassingUsedClosures() {
         val contextClosure = { 1 }
-        assertEquals(2, remote!!.exec(arrayOf({ contextClosure() + 1 })))
+        assertEquals(2, remote!!({ contextClosure() + 1 }))
     }
 
     @Test
     fun testPassingUsedClosuresFromFields() {
-        assertEquals(2, remote!!.exec(mapOf("usedClosures" to listOf(GlobalFun::class.java)), arrayOf({ GlobalFun.globalContextClosure() + 1 })))
+        assertEquals(2, remote!!(GlobalFun::class) { GlobalFun.globalContextClosure() + 1 })
     }
 
 /*

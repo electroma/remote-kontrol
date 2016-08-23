@@ -39,7 +39,7 @@ class DefaultResultFactory : ResultFactory {
         }
     }
 
-    protected fun forSerializable(serializable: Serializable): Result {
+    private fun forSerializable(serializable: Serializable): Result {
         try {
             val bytes = SerializationUtil.serialize(serializable)
             return DefaultSerializedResult(bytes)
@@ -49,7 +49,7 @@ class DefaultResultFactory : ResultFactory {
 
     }
 
-    protected fun forUnserializable(unserializable: Any): Result {
+    private fun forUnserializable(unserializable: Any): Result {
         return DefaultUnserializableResult(unserializable.toString())
     }
 
@@ -68,7 +68,6 @@ class DefaultResultFactory : ResultFactory {
 
     }
 
-    @Throws(IOException::class)
     override fun deserialize(inputStream: InputStream, classLoader: ClassLoader): Result {
         try {
             return SerializationUtil.deserialize(Result::class.java, inputStream, classLoader)

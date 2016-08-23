@@ -16,6 +16,7 @@
 
 package io.remotekontrol.kotlin.server
 
+import io.remotekontrol.Command
 import io.remotekontrol.CommandChain
 import io.remotekontrol.kotlin.ClosureCommand
 import io.remotekontrol.result.Result
@@ -35,16 +36,16 @@ class ClosureCommandRunner(
         return invokeCommandChain(commandChain)
     }
 
-    protected fun invokeCommandChain(commandChain: CommandChain<ClosureCommand>): Result {
+    private fun invokeCommandChain(commandChain: CommandChain<ClosureCommand>): Result {
         val invoker = createInvoker(classLoader, commandChain)
         return invoker.invokeAgainst(createContext(commandChain), null)
     }
 
-    protected fun createInvoker(classLoader: ClassLoader, commandChain: CommandChain<ClosureCommand>): CommandChainInvoker {
+    private fun createInvoker(classLoader: ClassLoader, commandChain: CommandChain<ClosureCommand>): CommandChainInvoker {
         return CommandChainInvoker(classLoader, commandChain, resultFactory)
     }
 
-    protected fun createContext(commandChain: CommandChain<ClosureCommand>): Any {
+    private fun createContext(commandChain: CommandChain<out Command>): Any {
         return contextFactory.getContext(commandChain)
     }
 }

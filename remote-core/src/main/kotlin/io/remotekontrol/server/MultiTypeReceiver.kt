@@ -16,28 +16,28 @@
 
 package io.remotekontrol.server
 
-import io.remotekontrol.Command
 import io.remotekontrol.CommandChain
 import io.remotekontrol.RemoteKontrolException
 import io.remotekontrol.SerializationUtil
+import io.remotekontrol.SerializationUtil.deserialize
+import io.remotekontrol.kotlin.ClosureCommand
 import io.remotekontrol.result.Result
-import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
 
-class MultiTypeReceiver(private val classLoader: ClassLoader, vararg runners: CommandRunner<*>) : Receiver {
-    private val runners: List<CommandRunner<*>>
+class MultiTypeReceiver(private val classLoader: ClassLoader, vararg runners: CommandRunner<ClosureCommand>) : Receiver {
+    private val runners: List<CommandRunner<ClosureCommand>>
 
     init {
         this.runners = Arrays.asList(*runners)
     }
 
-    @Throws(IOException::class)
+    @Suppress("UNCHECKED_CAST")
     override fun execute(commandStream: InputStream, resultStream: OutputStream) {
-        val commandChain: CommandChain<*>
+        val commandChain: CommandChain<ClosureCommand>
         try {
-            commandChain = SerializationUtil.deserialize(CommandChain::class.java, commandStream, classLoader)
+            commandChain = deserialize(CommandChain::class.java, commandStream, classLoader) as CommandChain<ClosureCommand>
         } catch (e: ClassNotFoundException) {
             throw RemoteKontrolException.classNotFoundOnServer(e)
         }
@@ -50,14 +50,12 @@ class MultiTypeReceiver(private val classLoader: ClassLoader, vararg runners: Co
             }
         }
 
-        throw RemoteKontrolException("Cannot handle commands of type:" + commandChain.type.name)
+        throw RemoteKontrolException("Cannot handle commands of type: ${commandChain.type.name}")
     }
 
-    private fun <T : Command> maybeInvoke(commandChain: CommandChain<T>, runner: CommandRunner<*>): Result? {
+    private fun maybeInvoke(commandChain: CommandChain<ClosureCommand>, runner: CommandRunner<ClosureCommand>): Result? {
         if (commandChain.type.isAssignableFrom(runner.type)) {
-            @SuppressWarnings("unchecked")
-            val cast = runner as CommandRunner<T>
-            return cast.run(commandChain)
+            return runner.run(commandChain)
         } else {
             return null
         }

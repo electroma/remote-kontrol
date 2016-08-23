@@ -20,9 +20,9 @@ package io.remotekontrol.client
 import io.remotekontrol.RemoteKontrolException
 import io.remotekontrol.result.UnserializableResult
 
-import java.lang.String.format
-
-class UnserializableReturnException(result: UnserializableResult) : RemoteKontrolException(format("The return value of the command was not serializable, its string representation was '%s'", result.stringRepresentation)) {
+class UnserializableReturnException(result: UnserializableResult) :
+        RemoteKontrolException("The return value of the command was not serializable, " +
+                "its string representation was '${result.stringRepresentation}'") {
 
     val stringRepresentation: String
 

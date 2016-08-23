@@ -32,7 +32,7 @@ object SerializationUtil {
             if (e is NotSerializableException) {
                 throw e
             }
-            throw UnexpectedIOException("Unexpected exception while serializing object: " + serializable, e)
+            throw UnexpectedIOException("Unexpected exception while serializing object: $serializable", e)
         }
 
         return baos.toByteArray()
@@ -62,13 +62,14 @@ object SerializationUtil {
         if (type.isInstance(o)) {
             return type.cast(o)
         } else {
-            throw IllegalArgumentException("Expecting to deserialize instance of " + type.name + " but got " + o.javaClass.name + ": " + o.toString())
+            throw IllegalArgumentException("Expecting to deserialize instance of ${type.name} but got ${o.javaClass.name}: $o")
         }
     }
 
     fun defineClass(classLoader: ClassLoader, bytes: ByteArray): Class<*> {
         try {
-            val defineClass = ClassLoader::class.java.getDeclaredMethod("defineClass", String::class.java, ByteArray::class.java, Integer.TYPE, Integer.TYPE)
+            val defineClass = ClassLoader::class.java
+                    .getDeclaredMethod("defineClass", String::class.java, ByteArray::class.java, Integer.TYPE, Integer.TYPE)
             defineClass.isAccessible = true
             val clazz = defineClass.invoke(classLoader, null, bytes, 0, bytes.size)
             return clazz as Class<*>

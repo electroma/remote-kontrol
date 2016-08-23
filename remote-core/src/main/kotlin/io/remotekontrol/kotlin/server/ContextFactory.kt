@@ -16,8 +16,8 @@
 
 package io.remotekontrol.kotlin.server
 
+import io.remotekontrol.Command
 import io.remotekontrol.CommandChain
-import io.remotekontrol.kotlin.ClosureCommand
 
 /**
  * A context factory produces what will be used as the delegate for all commands in a command chain.
@@ -27,6 +27,6 @@ interface ContextFactory {
     /**
      * Produces a context to be used for the entire given chain.
      */
-    fun getContext(chain: CommandChain<ClosureCommand>): Any
+    fun getContext(chain: CommandChain<out Command>): Any
 
 }

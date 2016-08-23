@@ -16,9 +16,7 @@
 
 package io.remotekontrol.kotlin.client
 
-import io.remotekontrol.util.IoUtil
 import java.io.File
-import java.io.IOException
 import java.net.URISyntaxException
 import java.net.URLClassLoader
 import java.util.*
@@ -36,14 +34,12 @@ class InnerClosureClassDefinitionsFinder(classLoader: ClassLoader) {
         this.classLoader = classLoader
     }
 
-    @SuppressWarnings("NestedBlockDepth")
-    @Throws(IOException::class)
     fun find(clazz: Class<*>): List<ByteArray> {
         val classes = ArrayList<ByteArray>()
         val innerClassPrefix = toInnerClassPrefix(clazz)
         val packageDirPath = toPackageDirPath(clazz)
-        val innerClassPrefixWithPackage = packageDirPath + "/" + innerClassPrefix
-        val ownerClassFileName = innerClassPrefix + ".class"
+        val innerClassPrefixWithPackage = "$packageDirPath/$innerClassPrefix"
+        val ownerClassFileName = "$innerClassPrefix.class"
 
         for (loader in calculateEffectiveClassLoaderHierarchy()) {
             for (url in loader.urLs) {
@@ -70,7 +66,7 @@ class InnerClosureClassDefinitionsFinder(classLoader: ClassLoader) {
                         for (classFileName in packageDir.list()!!) {
                             if (classFileName.startsWith(innerClassPrefix) && classFileName.endsWith(".class") && classFileName.length != ownerClassFileName.length) {
                                 val file = File(packageDir, classFileName)
-                                classes.add(IoUtil.read(file))
+                                classes.add(file.readBytes())
                             }
                         }
                     }
@@ -78,15 +74,14 @@ class InnerClosureClassDefinitionsFinder(classLoader: ClassLoader) {
                     val jarFile = ZipFile(root)
 
                     try {
-                        val packageDir = if (packageDirPath == null) root else jarFile.getEntry(packageDirPath)
-                        if (packageDir != null) {
+                        if (packageDirPath == null || jarFile.getEntry(packageDirPath) != null) {
                             val entries = jarFile.entries()
                             while (entries.hasMoreElements()) {
                                 val entry = entries.nextElement()
                                 val name = entry.name
                                 if (name.startsWith(innerClassPrefixWithPackage) && name.endsWith(".class") && !name.endsWith(ownerClassFileName)) {
                                     val inputStream = jarFile.getInputStream(entry)
-                                    classes.add(IoUtil.read(inputStream))
+                                    classes.add(inputStream.readBytes())
                                 }
                             }
                         }
@@ -97,11 +92,10 @@ class InnerClosureClassDefinitionsFinder(classLoader: ClassLoader) {
             }
         }
 
-
         return classes
     }
 
-    protected fun calculateEffectiveClassLoaderHierarchy(): List<URLClassLoader> {
+    private fun calculateEffectiveClassLoaderHierarchy(): List<URLClassLoader> {
         val hierarchy = ArrayList<URLClassLoader>()
         var current: URLClassLoader? = classLoader
         while (current != null && current is URLClassLoader) {
@@ -112,14 +106,13 @@ class InnerClosureClassDefinitionsFinder(classLoader: ClassLoader) {
         return hierarchy
     }
 
-    protected fun toPackageDirPath(clazz: Class<*>): String? {
+    private fun toPackageDirPath(clazz: Class<*>): String? {
         val pkg = clazz.`package`
         return if (pkg == null) "" else pkg.name.replace(".", "/")
     }
 
-    protected fun toInnerClassPrefix(clazz: Class<*>): String {
-        val `var` = clazz.`package`
-        val packageName = `var`?.name
+    private fun toInnerClassPrefix(clazz: Class<*>): String {
+        val packageName = clazz.`package`?.name
         val fixedName = clazz.name.replace("\$_$", "\$_")
         if (packageName == null) {
             return fixedName

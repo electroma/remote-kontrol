@@ -47,7 +47,7 @@ class ClosureReceiver
 
      * @param contextFactory the context factory to use to create contexts for command chains
      * *
-     * @see io.remotecontrol.server.Receiver
+     * @see io.remotekontrol.server.Receiver
      */
     constructor(contextFactory: ContextFactory) : this(Thread.currentThread().contextClassLoader, contextFactory) {
     }
@@ -59,7 +59,7 @@ class ClosureReceiver
      * *
      * @param contextStorageSeed the seed for the storage
      * *
-     * @see io.remotecontrol.server.StorageContextFactory.withSeed
+     * @see io.remotekontrol.server.StorageContextFactory.withSeed
      */
     constructor(classLoader: ClassLoader, contextStorageSeed: Map<String, Any>) : this(classLoader, StorageContextFactory.withSeed(contextStorageSeed)) {
     }
@@ -69,7 +69,7 @@ class ClosureReceiver
 
      * @param contextStorageSeed the seed for the storage
      * *
-     * @see io.remotecontrol.server.Receiver
+     * @see io.remotekontrol.server.Receiver
      */
     constructor(contextStorageSeed: Map<String, Any>) : this(Thread.currentThread().contextClassLoader, contextStorageSeed) {
     }

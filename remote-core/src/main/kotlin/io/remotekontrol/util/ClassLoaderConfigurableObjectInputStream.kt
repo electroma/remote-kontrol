@@ -27,7 +27,6 @@ import java.io.ObjectStreamClass
 class ClassLoaderConfigurableObjectInputStream @Throws(IOException::class)
 constructor(val classLoader: ClassLoader, input: InputStream) : ObjectInputStream(input) {
 
-    @Throws(IOException::class, ClassNotFoundException::class)
     public override fun resolveClass(desc: ObjectStreamClass): Class<*> {
         try {
             return classLoader.loadClass(desc.name)

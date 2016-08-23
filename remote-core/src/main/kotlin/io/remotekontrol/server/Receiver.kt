@@ -25,11 +25,10 @@ interface Receiver {
     /**
      * Executes a serialised command chain.
 
-     * @param commandStream A stream containing a serialised [io.remotecontrol.CommandChain] object.
+     * @param commandStream A stream containing a serialised [io.remotekontrol.CommandChain] object.
      * *
-     * @param resultStream The stream that the [io.remotecontrol.result.Result] object shall be written to.
+     * @param resultStream The stream that the [io.remotekontrol.result.Result] object shall be written to.
      */
-    @Throws(IOException::class)
     fun execute(commandStream: InputStream, resultStream: OutputStream)
 
 }

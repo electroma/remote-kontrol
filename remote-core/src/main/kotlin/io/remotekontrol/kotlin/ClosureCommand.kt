@@ -18,9 +18,10 @@ package io.remotekontrol.kotlin
 
 import io.remotekontrol.Command
 
-class ClosureCommand(val instance: ByteArray, val root: ByteArray, val supports: Collection<ByteArray>) : Command {
+class ClosureCommand(val instance: ByteArray,
+                     val root: ByteArray,
+                     val supports: Collection<ByteArray>) : Command {
     companion object {
-
         private val serialVersionUID = 1L
     }
 }

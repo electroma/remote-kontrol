@@ -19,4 +19,4 @@ package io.remotekontrol.client
 import io.remotekontrol.RemoteKontrolException
 
 class RemoteException(remote: Throwable) :
-        RemoteKontrolException("An exception was raised in the remotecontrol application", remote)
+        RemoteKontrolException("An exception was raised in the remotekontrol application", remote)

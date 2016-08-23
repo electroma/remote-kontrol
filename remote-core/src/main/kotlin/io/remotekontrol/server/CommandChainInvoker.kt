@@ -38,7 +38,7 @@ class CommandChainInvoker(private val parentLoader: ClassLoader, private val com
         return resultFactory.forValue(arg)
     }
 
-    protected fun createInvoker(loader: ClassLoader, command: ClosureCommand): CommandInvoker {
+    private fun createInvoker(loader: ClassLoader, command: ClosureCommand): CommandInvoker {
         return CommandInvoker(loader, command)
     }
 
