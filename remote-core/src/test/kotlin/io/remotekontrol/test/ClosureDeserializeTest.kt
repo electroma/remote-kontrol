@@ -1,4 +1,4 @@
-/*
+package io.remotekontrol.test/*
  *  Copyright 2016 the original author or authors.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,7 +31,7 @@ class ClosureDeserializeTest {
         val obj = readAllBytes(Paths.get(classLoader().getResource("obj.dmp").toURI()))
         val closureCommand = ClosureCommand(obj, clazz, emptyList())
         val classLoader = Thread.currentThread().contextClassLoader
-        val closureCommandRunner = ClosureCommandRunner(classLoader, StorageContextFactory.withEmptyStorage(), DefaultResultFactory())
+        val closureCommandRunner = ClosureCommandRunner(classLoader, StorageContextFactory.Companion.withEmptyStorage(), DefaultResultFactory())
         closureCommandRunner.run(CommandChain(ClosureCommand::class.java, listOf(closureCommand)))
     }
 
