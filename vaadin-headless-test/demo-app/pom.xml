@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~  Copyright 2016 the original author or authors.
+  ~
+  ~  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  you may not use this file except in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing, software
+  ~  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  See the License for the specific language governing permissions and
+  ~  limitations under the License.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>demo-app</artifactId>
-    <packaging>jar</packaging>
-
-    <name>demo-app</name>
-    <description>Demo project for Spring Boot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -16,12 +26,18 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <artifactId>demo-app</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <description>Demo project for Spring Boot</description>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
         <kotlin.version>1.0.3</kotlin.version>
         <vaadin.version>7.6.2</vaadin.version>
+        <tomcat.http.port>9999</tomcat.http.port>
     </properties>
 
     <dependencies>
@@ -49,8 +65,8 @@
         </dependency>
         <dependency>
             <groupId>io.remotekontrol</groupId>
-            <artifactId>vaadin-headless-test</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <artifactId>vaadin-headless-support</artifactId>
+            <version>${version}</version>
         </dependency>
     </dependencies>
 
@@ -72,8 +88,58 @@
 
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*HeadlessTest.java</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                        <configuration>
+                            <excludes>
+                                <exclude>-nothing-</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*HeadlessTest.java</include>
+                            </includes>
+                            <testFailureIgnore>true</testFailureIgnore>
+                            <useManifestOnlyJar>false</useManifestOnlyJar>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <fork>true</fork>
+                    <jvmArguments>-ea</jvmArguments>
+                    <arguments>
+                        <argument>--server.port=${tomcat.http.port}</argument>
+                        <argument>--remoting=true</argument>
+                    </arguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pre-integration-test</id>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-integration-test</id>
+                        <goals>
+                            <goal>stop</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>
@@ -98,6 +164,4 @@
             </plugin>
         </plugins>
     </build>
-
-
 </project>
