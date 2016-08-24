@@ -1,0 +1,14 @@
+Port of Groovy https://github.com/alkemist/remote-control/[remote-control] to Kotlin.
+
+== Features
+
+* Supports inner closures
+* Outside class references may be passed along with command closure
+* May be added to the existing web application as a servlet
+* Has Vaadin test connector
+
+== How it may be used
+
+* Post-deployment acceptance tests execution
+* One time job execution on remote system
+
